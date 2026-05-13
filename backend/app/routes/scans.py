@@ -262,6 +262,23 @@ def safe_text(value):
         return "N/A"
     return str(value)
 
+def add_pdf_background(canvas, doc):
+    canvas.saveState()
+    canvas.setFillColor(colors.HexColor("#F7FBFF"))
+    canvas.rect(0, 0, A4[0], A4[1], fill=1, stroke=0)
+
+    canvas.setFont("Helvetica", 9)
+    canvas.setFillColor(colors.HexColor("#64748B"))
+
+    page_num = canvas.getPageNumber()
+
+    canvas.drawCentredString(
+        A4[0] / 2,
+        15,
+        f"Page {page_num}"
+    )
+    
+    canvas.restoreState()
 
 def build_styled_pdf(doc, scan, vulnerabilities):
     styles = getSampleStyleSheet()
@@ -374,27 +391,51 @@ def build_styled_pdf(doc, scan, vulnerabilities):
         textColor=colors.HexColor("#475569"),
     )
     
+    center_title_style = ParagraphStyle(
+        "CenterTitle",
+        parent=styles["Title"],
+        fontName="Helvetica-Bold",
+        fontSize=23,
+        leading=28,
+        textColor=colors.HexColor("#0F172A"),
+        alignment=1,
+    )
+    
+    center_subtitle_style = ParagraphStyle(
+        "CenterSubtitle",
+        parent=styles["Normal"],
+        fontSize=10,
+        leading=13,
+        textColor=colors.HexColor("#64748B"),
+        alignment=1,
+    )
+    
     header_left = [
-        Paragraph("Scan Report", main_title_style),
+        Paragraph("Scan<br/>Report", main_title_style),
         Paragraph("Comprehensive API<br/>Security Assessment", tagline_style),
     ]
     
-    header_center = Table(
-        [[
-            logo,
-            [
-                Paragraph("SentinelGate", brand_name_style),
-                Paragraph("API Security Scanner", brand_subtitle_style),
-            ]
-        ]],
-        colWidths=[0.65 * inch, 2.45 * inch]
+    brand_block = Table(
+        [
+            [logo],
+            [Paragraph("<para alignment='center'>SentinelGate</para>", brand_name_style)],
+            [Paragraph("<para alignment='center'>API Security Scanner</para>", brand_subtitle_style)],
+        ],
+        colWidths=[3.3 * inch]
     )
     
-    header_center.setStyle(TableStyle([
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    brand_block.setStyle(TableStyle([
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
         ("LEFTPADDING", (0, 0), (-1, -1), 0),
         ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BOTTOMPADDING", (0, 0), (0, 0), 1),
+        ("TOPPADDING", (0, 1), (0, 1), -2),
+        ("BOTTOMPADDING", (0, 1), (0, 1), -1),
+        ("TOPPADDING", (0, 2), (0, 2), -1),
     ]))
+
+
     
     header_right = Paragraph(
         f"""
@@ -406,14 +447,17 @@ def build_styled_pdf(doc, scan, vulnerabilities):
     )
     
     header_table = Table(
-        [[header_left, header_center, header_right]],
-        colWidths=[2.0 * inch, 3.35 * inch, 1.25 * inch]
+        [[header_left, brand_block, header_right]],
+        colWidths=[1.6 * inch, 3.3 * inch, 1.6 * inch]
     )
     
     header_table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FBFF")),
         ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#BFDBFE")),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("ALIGN", (0, 0), (0, 0), "LEFT"),
+        ("ALIGN", (1, 0), (1, 0), "CENTER"),
+        ("ALIGN", (2, 0), (2, 0), "CENTER"),
         ("TOPPADDING", (0, 0), (-1, -1), 12),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 12),
         ("LEFTPADDING", (0, 0), (-1, -1), 12),
@@ -649,7 +693,7 @@ def generate_scan_pdf_file(scan, vulnerabilities):
     )
 
     elements = build_styled_pdf(doc, scan, vulnerabilities)
-    doc.build(elements)
+    doc.build(elements, onFirstPage=add_pdf_background, onLaterPages=add_pdf_background)
 
     return file_path
 
@@ -1511,7 +1555,7 @@ def export_scan_pdf(scan_id):
     )
 
     elements = build_styled_pdf(doc, scan, vulnerabilities)
-    doc.build(elements)
+    doc.build(elements, onFirstPage=add_pdf_background, onLaterPages=add_pdf_background)
 
     buffer.seek(0)
 
