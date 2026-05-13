@@ -493,7 +493,7 @@ def build_styled_pdf(doc, scan, vulnerabilities):
     elements.append(Spacer(1, 12))
 
     # Summary cards
-    elements.append(Paragraph("1. Summary", section_style))
+    elements.append(Paragraph("Summary", section_style))
 
     summary_data = [[
         Paragraph(f"<font color='#DC2626' size='16'><b>{severity_counts['Critical']}</b></font><br/><b>Critical</b><br/><font size='7'>High Risk</font>", small_style),
@@ -524,7 +524,7 @@ def build_styled_pdf(doc, scan, vulnerabilities):
     elements.append(Spacer(1, 12))
 
     # Findings overview table
-    elements.append(Paragraph("2. Findings Overview", section_style))
+    elements.append(Paragraph("Findings Overview", section_style))
 
     overview_data = [[
         "#", "Vulnerability", "Endpoint", "Severity", "CVSS", "Category", "Status"
@@ -563,7 +563,7 @@ def build_styled_pdf(doc, scan, vulnerabilities):
     elements.append(Spacer(1, 12))
 
     # Detailed findings
-    elements.append(Paragraph("3. Detailed Findings", section_style))
+    elements.append(Paragraph("Detailed Findings", section_style))
 
     for index, vuln in enumerate(vulnerabilities, start=1):
         sev_color, sev_bg = get_severity_colors(vuln.severity)
@@ -615,7 +615,7 @@ def build_styled_pdf(doc, scan, vulnerabilities):
             ["Mitigation Steps", Paragraph(mitigation_html, small_style)],
         ]
 
-        details_table = Table(details_data, colWidths=[1.1 * inch, 5.5 * inch])
+        details_table = Table(details_data, colWidths=[1.25 * inch, 5.35 * inch])
         details_table.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#EFF6FF")),
             ("BACKGROUND", (1, 0), (1, -1), colors.HexColor("#FFFFFF")),
@@ -631,7 +631,7 @@ def build_styled_pdf(doc, scan, vulnerabilities):
         elements.append(Spacer(1, 10))
 
     # Recommendations
-    elements.append(Paragraph("4. Recommendations", section_style))
+    elements.append(Paragraph("Recommendations", section_style))
 
     overall_recommendations = [
         "Address all Critical and High vulnerabilities immediately.",
@@ -645,12 +645,7 @@ def build_styled_pdf(doc, scan, vulnerabilities):
         [f"✓ {item}" for item in overall_recommendations]
     )
     
-    rec_title = Paragraph(
-        "<font size='14'><b>Security Recommendations</b></font>",
-        section_style
-    )
-    
-    elements.append(rec_title)
+
     
     rec_table = Table(
         [[Paragraph(recommendation_content, normal_style)]],
