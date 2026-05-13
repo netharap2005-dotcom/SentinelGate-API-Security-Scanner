@@ -26,15 +26,8 @@ The platform performs vulnerability scanning, attack simulation, CVSS-based risk
 
 # System Architecture
 
-```text
-Frontend (React)
-        ↓
-Backend API (Flask)
-        ↓
-PostgreSQL Database
-        ↓
-ML Severity Prediction Engine
-```
+## System Architecture
+![System Architecture](assets/system_architecture.png)
 
 ---
 
