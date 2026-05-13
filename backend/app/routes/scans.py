@@ -12,11 +12,17 @@ from app.services.scanner_service import run_scan
 from app.services.owasp_catalog import get_recommendations, get_mitigation_steps
 from app.services.email_service import send_email_notification
 from flask import Response
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
 from io import BytesIO
 import threading
 from flask import current_app
+from reportlab.platypus import Image
 
 
 
@@ -230,7 +236,402 @@ def is_critical_finding(item):
         or item.get("ml_severity") == "Critical"
         or item.get("cvss_score", 0) >= 9.0
     )
+def get_severity_colors(severity):
+    palette = {
+        "Critical": (colors.HexColor("#EF4444"), colors.HexColor("#FEE2E2")),
+        "High": (colors.HexColor("#F97316"), colors.HexColor("#FFEDD5")),
+        "Medium": (colors.HexColor("#EAB308"), colors.HexColor("#FEF9C3")),
+        "Low": (colors.HexColor("#22C55E"), colors.HexColor("#DCFCE7")),
+    }
+    return palette.get(severity, (colors.HexColor("#2563EB"), colors.HexColor("#DBEAFE")))
 
+
+def get_cvss_severity(score):
+    score = float(score or 0)
+    if score >= 9.0:
+        return "Critical"
+    elif score >= 7.0:
+        return "High"
+    elif score >= 4.0:
+        return "Medium"
+    return "Low"
+
+
+def safe_text(value):
+    if value is None:
+        return "N/A"
+    return str(value)
+
+
+def build_styled_pdf(doc, scan, vulnerabilities):
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "ReportTitle",
+        parent=styles["Title"],
+        fontSize=24,
+        textColor=colors.HexColor("#111827"),
+        alignment=1,
+        spaceAfter=4,
+    )
+
+    subtitle_style = ParagraphStyle(
+        "Subtitle",
+        parent=styles["Normal"],
+        fontSize=10,
+        textColor=colors.HexColor("#64748B"),
+        alignment=1,
+        spaceAfter=14,
+    )
+
+    section_style = ParagraphStyle(
+        "SectionTitle",
+        parent=styles["Heading2"],
+        fontSize=14,
+        textColor=colors.HexColor("#2563EB"),
+        spaceBefore=10,
+        spaceAfter=8,
+    )
+
+    normal_style = ParagraphStyle(
+        "NormalCustom",
+        parent=styles["Normal"],
+        fontSize=8,
+        leading=11,
+        textColor=colors.HexColor("#111827"),
+    )
+
+    small_style = ParagraphStyle(
+        "SmallCustom",
+        parent=styles["Normal"],
+        fontSize=6.5,
+        leading=8,
+        textColor=colors.HexColor("#334155"),
+    )
+
+    elements = []
+
+    logo_path = os.path.abspath(
+        os.path.join(
+            os.getcwd(),
+            "..",
+            "frontend",
+            "public",
+            "logo.png"
+        )
+    )
+
+    severity_counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
+    for vuln in vulnerabilities:
+        if vuln.severity in severity_counts:
+            severity_counts[vuln.severity] += 1
+
+    total_findings = len(vulnerabilities)
+    cvss_severity = get_cvss_severity(scan.cvss_score)
+    report_date = scan.completed_at.strftime("%d %b %Y") if scan.completed_at else datetime.utcnow().strftime("%d %b %Y")
+    report_time = scan.completed_at.strftime("%I:%M %p") if scan.completed_at else datetime.utcnow().strftime("%I:%M %p")
+
+    # ---------- HEADER ----------
+    if os.path.exists(logo_path):
+        logo = Image(logo_path, width=54, height=54)
+    else:
+        logo = Paragraph("<b>SG</b>", normal_style)
+        
+    main_title_style = ParagraphStyle(
+        "MainTitle",
+        parent=styles["Title"],
+        fontName="Helvetica-Bold",
+        fontSize=21,
+        leading=24,
+        textColor=colors.HexColor("#0F172A"),
+        alignment=0,
+    )
+    
+    tagline_style = ParagraphStyle(
+        "Tagline",
+        parent=styles["Normal"],
+        fontSize=10,
+        leading=13,
+        textColor=colors.HexColor("#64748B"),
+        alignment=0,
+    )
+    
+    brand_name_style = ParagraphStyle(
+        "BrandName",
+        parent=styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=20,
+        leading=23,
+        textColor=colors.HexColor("#2563EB"),
+    )
+    
+    brand_subtitle_style = ParagraphStyle(
+        "BrandSubtitle",
+        parent=styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=8.5,
+        leading=10,
+        textColor=colors.HexColor("#475569"),
+    )
+    
+    header_left = [
+        Paragraph("Scan Report", main_title_style),
+        Paragraph("Comprehensive API<br/>Security Assessment", tagline_style),
+    ]
+    
+    header_center = Table(
+        [[
+            logo,
+            [
+                Paragraph("SentinelGate", brand_name_style),
+                Paragraph("API Security Scanner", brand_subtitle_style),
+            ]
+        ]],
+        colWidths=[0.65 * inch, 2.45 * inch]
+    )
+    
+    header_center.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    
+    header_right = Paragraph(
+        f"""
+        <b>Report ID</b><br/>
+        SG-{scan.id:04d}<br/><br/>
+        <b>{report_date}</b><br/>
+        {report_time}""",
+        small_style
+    )
+    
+    header_table = Table(
+        [[header_left, header_center, header_right]],
+        colWidths=[2.0 * inch, 3.35 * inch, 1.25 * inch]
+    )
+    
+    header_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F8FBFF")),
+        ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#BFDBFE")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 12),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 12),
+        ("LEFTPADDING", (0, 0), (-1, -1), 12),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+    ]))
+    elements.append(header_table)
+    elements.append(Spacer(1, 12))
+    
+
+    # Scan info row
+    info_data = [
+        [
+            Paragraph(f"<b>Target URL</b><br/>{safe_text(scan.target_url)}", small_style),
+            Paragraph(f"<b>Scan Type</b><br/>{safe_text(scan.scan_depth).capitalize()} Scan", small_style),
+            Paragraph(f"<b>CVSS Score</b><br/><font color='#DC2626'><b>{safe_text(scan.cvss_score)} ({cvss_severity})</b></font>", small_style),
+            Paragraph(f"<b>ML Severity</b><br/>{safe_text(scan.ml_severity)}", small_style),
+            Paragraph(f"<b>Duration</b><br/>{safe_text(format_duration(scan.started_at, scan.completed_at))}", small_style),
+            Paragraph(f"<b>Date</b><br/>{report_date}", small_style),
+        ]
+    ]
+
+    info_table = Table(info_data, colWidths=[1.7 * inch, 1.1 * inch, 1.15 * inch, 1.05 * inch, 0.9 * inch, 0.95 * inch])
+    info_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#EFF6FF")),
+        ("BOX", (0, 0), (-1, -1), 0.8, colors.HexColor("#BFDBFE")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+    ]))
+    elements.append(info_table)
+    elements.append(Spacer(1, 12))
+
+    # Summary cards
+    elements.append(Paragraph("1. Summary", section_style))
+
+    summary_data = [[
+        Paragraph(f"<font color='#DC2626' size='16'><b>{severity_counts['Critical']}</b></font><br/><b>Critical</b><br/><font size='7'>High Risk</font>", small_style),
+        Paragraph(f"<font color='#EA580C' size='16'><b>{severity_counts['High']}</b></font><br/><b>High</b><br/><font size='7'>Elevated Risk</font>", small_style),
+        Paragraph(f"<font color='#CA8A04' size='16'><b>{severity_counts['Medium']}</b></font><br/><b>Medium</b><br/><font size='7'>Moderate Risk</font>", small_style),
+        Paragraph(f"<font color='#16A34A' size='16'><b>{severity_counts['Low']}</b></font><br/><b>Low</b><br/><font size='7'>Low Risk</font>", small_style),
+        Paragraph(f"<font color='#2563EB' size='16'><b>{total_findings}</b></font><br/><b>Total Findings</b><br/><font size='7'>All Severities</font>", small_style),
+    ]]
+
+    summary_table = Table(summary_data, colWidths=[1.35 * inch] * 5)
+    summary_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, 0), colors.HexColor("#FEE2E2")),
+        ("BACKGROUND", (1, 0), (1, 0), colors.HexColor("#FFEDD5")),
+        ("BACKGROUND", (2, 0), (2, 0), colors.HexColor("#FEF9C3")),
+        ("BACKGROUND", (3, 0), (3, 0), colors.HexColor("#DCFCE7")),
+        ("BACKGROUND", (4, 0), (4, 0), colors.HexColor("#DBEAFE")),
+        ("BOX", (0, 0), (0, 0), 0.7, colors.HexColor("#FCA5A5")),
+        ("BOX", (1, 0), (1, 0), 0.7, colors.HexColor("#FDBA74")),
+        ("BOX", (2, 0), (2, 0), 0.7, colors.HexColor("#FDE68A")),
+        ("BOX", (3, 0), (3, 0), 0.7, colors.HexColor("#86EFAC")),
+        ("BOX", (4, 0), (4, 0), 0.7, colors.HexColor("#93C5FD")),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+    ]))
+    elements.append(summary_table)
+    elements.append(Spacer(1, 12))
+
+    # Findings overview table
+    elements.append(Paragraph("2. Findings Overview", section_style))
+
+    overview_data = [[
+        "#", "Vulnerability", "Endpoint", "Severity", "CVSS", "Category", "Status"
+    ]]
+
+    for index, vuln in enumerate(vulnerabilities, start=1):
+        overview_data.append([
+            str(index),
+            Paragraph(safe_text(vuln.vuln_name), small_style),
+            Paragraph(safe_text(vuln.endpoint), small_style),
+            safe_text(vuln.severity),
+            safe_text(vuln.cvss_score),
+            Paragraph(format_category_label(vuln.category), small_style),
+            safe_text(vuln.status),
+        ])
+
+    if len(overview_data) == 1:
+        overview_data.append(["-", "No vulnerabilities found", "-", "-", "-", "-", "-"])
+
+    overview_table = Table(
+        overview_data,
+        colWidths=[0.35 * inch, 1.35 * inch, 1.0 * inch, 0.75 * inch, 0.55 * inch, 1.55 * inch, 0.65 * inch]
+    )
+    overview_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#3B82F6")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 7),
+        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#BFDBFE")),
+        ("BACKGROUND", (0, 1), (-1, -1), colors.HexColor("#F8FBFF")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(overview_table)
+    elements.append(Spacer(1, 12))
+
+    # Detailed findings
+    elements.append(Paragraph("3. Detailed Findings", section_style))
+
+    for index, vuln in enumerate(vulnerabilities, start=1):
+        sev_color, sev_bg = get_severity_colors(vuln.severity)
+
+        finding_header = Table(
+            [[
+                Paragraph(f"<font size='13'><b>{index}. {safe_text(vuln.vuln_name)}</b></font>", normal_style),
+                Paragraph(f"<b>{safe_text(vuln.severity)}</b>", small_style),
+                Paragraph(f"<b>CVSS: {safe_text(vuln.cvss_score)}</b>", small_style),
+            ]],
+            colWidths=[4.6 * inch, 1.0 * inch, 1.0 * inch]
+        )
+        finding_header.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), sev_bg),
+            ("BOX", (0, 0), (-1, -1), 0.7, sev_color),
+            ("TEXTCOLOR", (1, 0), (1, 0), sev_color),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("TOPPADDING", (0, 0), (-1, -1), 7),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ]))
+        elements.append(finding_header)
+
+        recommendations = get_recommendations(
+            vuln.category or map_to_owasp_category(vuln.vuln_name)
+        )
+        
+        mitigation_steps = get_mitigation_steps(
+            vuln.category or map_to_owasp_category(vuln.vuln_name)
+        )
+        
+        recommendation_html = "<br/>".join(
+            [f"• {item}" for item in recommendations]
+        )
+        
+        mitigation_html = "<br/>".join(
+            [f"• {item}" for item in mitigation_steps]
+        )
+        
+        details_data = [
+            ["Endpoint", Paragraph(safe_text(vuln.endpoint), small_style)],
+            ["Category", Paragraph(format_category_label(vuln.category), small_style)],
+            ["Method", Paragraph(safe_text(vuln.method), small_style)],
+            ["Affected Parameter", Paragraph(safe_text(vuln.affected_parameter), small_style)],
+            ["Payload Example", Paragraph(safe_text(vuln.payload_example), small_style)],
+            ["Description", Paragraph(safe_text(vuln.description), small_style)],
+            ["Evidence", Paragraph(safe_text(vuln.evidence), small_style)],
+            ["Recommendations", Paragraph(recommendation_html, small_style)],
+            ["Mitigation Steps", Paragraph(mitigation_html, small_style)],
+        ]
+
+        details_table = Table(details_data, colWidths=[1.1 * inch, 5.5 * inch])
+        details_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#EFF6FF")),
+            ("BACKGROUND", (1, 0), (1, -1), colors.HexColor("#FFFFFF")),
+            ("GRID", (0, 0), (-1, -1), 0.35, colors.HexColor("#BFDBFE")),
+            ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, -1), 8),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ("TOPPADDING", (0, 0), (-1, -1), 5),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ("LEFTPADDING", (0, 0), (-1, -1), 7),
+        ]))
+        elements.append(details_table)
+        elements.append(Spacer(1, 10))
+
+    # Recommendations
+    elements.append(Paragraph("4. Recommendations", section_style))
+
+    overall_recommendations = [
+        "Address all Critical and High vulnerabilities immediately.",
+        "Implement strong input validation and parameterized queries.",
+        "Enforce MFA and secure session management.",
+        "Apply API rate limiting and abuse monitoring.",
+        "Conduct regular API security assessments and penetration testing.",
+    ]
+    
+    recommendation_content = "<br/><br/>".join(
+        [f"✓ {item}" for item in overall_recommendations]
+    )
+    
+    rec_title = Paragraph(
+        "<font size='14'><b>Security Recommendations</b></font>",
+        section_style
+    )
+    
+    elements.append(rec_title)
+    
+    rec_table = Table(
+        [[Paragraph(recommendation_content, normal_style)]],
+        colWidths=[6.7 * inch]
+    )
+    
+    rec_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#EFF6FF")),
+        ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#93C5FD")),
+        ("TOPPADDING", (0, 0), (-1, -1), 14),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 14),
+        ("LEFTPADDING", (0, 0), (-1, -1), 16),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 16),
+    ]))
+    
+    elements.append(rec_table)
+
+    elements.append(Spacer(1, 12))
+    footer = Paragraph(
+        "<font size='7'>Generated by <b>SentinelGate</b> API Security Scanner</font>",
+        ParagraphStyle("Footer", parent=styles["Normal"], alignment=1, textColor=colors.HexColor("#64748B"))
+    )
+    elements.append(footer)
+
+    return elements
 
 def generate_scan_pdf_file(scan, vulnerabilities):
     reports_dir = os.path.join(os.getcwd(), "generated_reports")
@@ -238,46 +639,18 @@ def generate_scan_pdf_file(scan, vulnerabilities):
 
     file_path = os.path.join(reports_dir, f"scan_{scan.id}_report.pdf")
 
-    doc = SimpleDocTemplate(file_path)
-    styles = getSampleStyleSheet()
-    elements = []
+    doc = SimpleDocTemplate(
+        file_path,
+        pagesize=A4,
+        rightMargin=30,
+        leftMargin=30,
+        topMargin=25,
+        bottomMargin=25
+    )
 
-    elements.append(Paragraph("SentinelGate Scan Report", styles["Title"]))
-    elements.append(Spacer(1, 10))
-
-    elements.append(Paragraph(f"Target URL: {scan.target_url}", styles["Normal"]))
-    elements.append(Paragraph(f"Scan Depth: {scan.scan_depth}", styles["Normal"]))
-    elements.append(Paragraph(f"CVSS Score: {scan.cvss_score}", styles["Normal"]))
-    elements.append(Paragraph(f"ML Severity: {scan.ml_severity}", styles["Normal"]))
-    elements.append(Paragraph(f"Duration: {format_duration(scan.started_at, scan.completed_at)}", styles["Normal"]))
-    elements.append(Spacer(1, 15))
-
-    severity_counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
-    for vuln in vulnerabilities:
-        if vuln.severity in severity_counts:
-            severity_counts[vuln.severity] += 1
-
-    elements.append(Paragraph("Summary", styles["Heading2"]))
-    for key, value in severity_counts.items():
-        elements.append(Paragraph(f"{key}: {value}", styles["Normal"]))
-
-    elements.append(Spacer(1, 15))
-    elements.append(Paragraph("Detailed Findings", styles["Heading2"]))
-    elements.append(Spacer(1, 10))
-
-    for vuln in vulnerabilities:
-        elements.append(Paragraph(f"Name: {vuln.vuln_name}", styles["Normal"]))
-        elements.append(Paragraph(f"Endpoint: {vuln.endpoint}", styles["Normal"]))
-        elements.append(Paragraph(f"Final Risk Severity: {vuln.severity}", styles["Normal"]))
-        elements.append(Paragraph(f"CVSS Score: {vuln.cvss_score}", styles["Normal"]))
-        elements.append(Paragraph(f"ML Prediction Severity: {vuln.ml_severity}", styles["Normal"]))
-        elements.append(Paragraph(f"Category: {format_category_label(vuln.category)}", styles["Normal"]))
-        elements.append(Paragraph(f"Description: {vuln.description}", styles["Normal"]))
-        elements.append(Paragraph(f"Evidence: {vuln.evidence}", styles["Normal"]))
-        elements.append(Paragraph(f"Recommendation: {vuln.recommendation}", styles["Normal"]))
-        elements.append(Spacer(1, 10))
-
+    elements = build_styled_pdf(doc, scan, vulnerabilities)
     doc.build(elements)
+
     return file_path
 
 def build_cvss_panel(score):
@@ -1128,51 +1501,16 @@ def export_scan_pdf(scan_id):
 
     buffer = BytesIO()
 
-    doc = SimpleDocTemplate(buffer)
-    styles = getSampleStyleSheet()
-    elements = []
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=30,
+        leftMargin=30,
+        topMargin=25,
+        bottomMargin=25
+    )
 
-    # Title
-    elements.append(Paragraph("SentinelGate Scan Report", styles["Title"]))
-    elements.append(Spacer(1, 10))
-
-    # Scan info
-    elements.append(Paragraph(f"Target URL: {scan.target_url}", styles["Normal"]))
-    elements.append(Paragraph(f"Scan Depth: {scan.scan_depth}", styles["Normal"]))
-    elements.append(Paragraph(f"CVSS Score: {scan.cvss_score}", styles["Normal"]))
-    elements.append(Paragraph(f"ML Severity: {scan.ml_severity}", styles["Normal"]))
-    elements.append(Paragraph(f"Duration: {format_duration(scan.started_at, scan.completed_at)}", styles["Normal"]))
-    elements.append(Spacer(1, 15))
-
-    # Summary
-    severity_counts = {"Critical": 0, "High": 0, "Medium": 0, "Low": 0}
-
-    for vuln in vulnerabilities:
-        if vuln.severity in severity_counts:
-            severity_counts[vuln.severity] += 1
-
-    elements.append(Paragraph("Summary", styles["Heading2"]))
-    for key, value in severity_counts.items():
-        elements.append(Paragraph(f"{key}: {value}", styles["Normal"]))
-
-    elements.append(Spacer(1, 15))
-
-    # Findings
-    elements.append(Paragraph("Detailed Findings", styles["Heading2"]))
-    elements.append(Spacer(1, 10))
-
-    for vuln in vulnerabilities:
-        elements.append(Paragraph(f"Name: {vuln.vuln_name}", styles["Normal"]))
-        elements.append(Paragraph(f"Endpoint: {vuln.endpoint}", styles["Normal"]))
-        elements.append(Paragraph(f"Final Risk Severity: {vuln.severity}", styles["Normal"]))
-        elements.append(Paragraph(f"CVSS Score: {vuln.cvss_score}", styles["Normal"]))
-        elements.append(Paragraph(f"ML Prediction Severity: {vuln.ml_severity}", styles["Normal"]))
-        elements.append(Paragraph(f"Category: {format_category_label(vuln.category)}", styles["Normal"]))
-        elements.append(Paragraph(f"Description: {vuln.description}", styles["Normal"]))
-        elements.append(Paragraph(f"Evidence: {vuln.evidence}", styles["Normal"]))
-        elements.append(Paragraph(f"Recommendation: {vuln.recommendation}", styles["Normal"]))
-        elements.append(Spacer(1, 10))
-
+    elements = build_styled_pdf(doc, scan, vulnerabilities)
     doc.build(elements)
 
     buffer.seek(0)
