@@ -40,17 +40,17 @@ ML Severity Prediction Engine
 
 # Screenshots
 
-## Login Page
-![Login](screenshots/login.png)
-
 ## Register Page
 ![Register](screenshots/register.png)
 
-## MFA Setup
-![MFA](screenshots/mfa.png)
+## Login Page
+![Login](screenshots/login.png)
 
 ## Authenticator Setup
 ![Authenticator](screenshots/authenticator_setup.png)
+
+## MFA Setup
+![MFA](screenshots/mfa.png)
 
 ## Dashboard
 ![Dashboard](screenshots/dashboard.png)
@@ -71,4 +71,4 @@ ML Severity Prediction Engine
 ![Report](screenshots/report.png)
 
 
-![Report](screenshots/report.png)
+
