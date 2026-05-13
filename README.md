@@ -1,14 +1,36 @@
-# SentinelGate
+# SentinelGate – Automated API Security Scanner
 
-SentinelGate is an automated API security scanning platform designed to detect vulnerabilities based on the OWASP API Top 10 framework.
+SentinelGate is a web-based API security scanning platform developed to help small and medium-sized businesses identify vulnerabilities in APIs using automated security analysis.
 
-The system performs vulnerability scanning, attack simulation, CVSS-based risk scoring, and machine learning-based severity prediction. Results are displayed through a web-based dashboard and security reports.
+The platform performs vulnerability scanning, attack simulation, CVSS-based risk scoring, and machine learning-based severity prediction using the OWASP API Security Top 10 framework.
 
-Main features:
-- API vulnerability scanning
+---
+
+# Features
+
+- Automated API vulnerability scanning
 - OWASP API Top 10 detection
-- Attack simulation (SQL injection, authentication bypass, rate limit testing)
+- SQL Injection simulation
+- Authentication bypass testing
+- Rate limit testing
 - CVSS risk scoring
 - Machine learning severity prediction
-- Security dashboard
-- Automated vulnerability reports
+- Real-time dashboard
+- MFA authentication
+- Session management
+- Security alert system
+- PDF security report generation
+- Scan history tracking
+
+---
+
+# System Architecture
+
+```text
+Frontend (React)
+        ↓
+Backend API (Flask)
+        ↓
+PostgreSQL Database
+        ↓
+ML Severity Prediction Engine
