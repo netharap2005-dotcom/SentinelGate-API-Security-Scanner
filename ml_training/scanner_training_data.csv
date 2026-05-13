@@ -1,0 +1,483 @@
+response_code,response_size,error_message_present,data_exposure_detected,auth_state,attack_type,severity_label
+500,1103,1,0,2,Path Traversal,High
+200,65,0,1,1,Information Disclosure,Low
+403,720,1,0,2,XSS,High
+500,889,1,0,2,XSS,High
+401,1038,1,0,2,Path Traversal,High
+200,301,0,1,1,Information Disclosure,Low
+429,300,0,0,1,BOLA,Medium
+500,1666,1,1,3,Broken Authentication,Critical
+200,592,0,1,1,Information Disclosure,Medium
+500,1014,1,0,2,BOLA,High
+401,315,0,0,1,XSS,Medium
+200,784,0,0,1,SQL Injection,Low
+403,1323,0,1,1,SQL Injection,Medium
+403,1816,1,1,3,Broken Authentication,Critical
+429,360,1,0,1,Security Misconfiguration,Medium
+200,352,0,0,1,Broken Authentication,Medium
+200,747,0,0,1,SQL Injection,Low
+403,3508,1,1,1,Excessive Data Exposure,Medium
+500,3637,1,1,2,Excessive Data Exposure,High
+200,154,0,0,1,Rate Limit Abuse,Low
+404,273,0,0,1,Broken Authentication,Low
+200,368,1,0,2,BOLA,Medium
+500,2502,1,1,2,SQL Injection,Critical
+403,1363,1,0,2,Security Misconfiguration,High
+200,140,0,0,1,Rate Limit Abuse,Low
+401,998,1,0,3,Broken Authentication,High
+429,606,1,0,2,XSS,High
+500,2722,1,0,3,Security Misconfiguration,Critical
+200,634,1,0,1,Security Misconfiguration,Medium
+500,1028,1,0,2,XSS,Critical
+500,364,1,0,2,Rate Limit Abuse,High
+404,86,0,0,1,XSS,Low
+429,1073,1,0,2,BOLA,High
+401,3687,1,1,2,Excessive Data Exposure,High
+403,1284,1,1,3,Broken Authentication,Critical
+200,1305,0,0,1,Excessive Data Exposure,Low
+500,3236,1,0,3,Security Misconfiguration,Critical
+503,2016,0,0,3,Security Misconfiguration,Critical
+401,1433,1,0,3,BOLA,High
+200,350,1,0,1,Rate Limit Abuse,Medium
+403,2679,0,1,1,Excessive Data Exposure,Medium
+500,1893,0,1,3,SQL Injection,High
+200,569,0,0,1,Broken Authentication,Medium
+403,383,1,0,1,Security Misconfiguration,Medium
+500,2820,1,1,3,Path Traversal,Critical
+429,854,1,0,2,XSS,High
+200,218,0,0,1,XSS,Low
+200,497,0,1,1,Information Disclosure,Medium
+200,692,0,0,1,Broken Authentication,Medium
+200,660,0,1,1,Information Disclosure,Medium
+500,809,1,0,2,Security Misconfiguration,High
+200,233,1,0,1,Rate Limit Abuse,Low
+200,740,0,0,1,SQL Injection,Low
+429,501,0,0,2,XSS,High
+200,146,0,0,1,Security Misconfiguration,Low
+500,472,1,0,3,Rate Limit Abuse,Critical
+401,1324,1,0,3,Broken Authentication,High
+403,2878,1,0,2,Security Misconfiguration,Critical
+500,1532,1,0,3,XSS,Critical
+429,1957,0,1,2,SQL Injection,High
+403,441,0,0,1,Security Misconfiguration,Medium
+503,2777,1,1,2,Path Traversal,Critical
+401,1759,1,1,3,BOLA,Critical
+200,98,1,0,1,Security Misconfiguration,Low
+401,1097,1,0,2,Security Misconfiguration,High
+200,224,0,0,1,Rate Limit Abuse,Low
+403,3553,1,1,2,SQL Injection,Critical
+500,2239,1,1,3,BOLA,Critical
+500,1916,1,1,2,Information Disclosure,Critical
+401,651,1,0,2,XSS,High
+200,492,0,0,1,XSS,Medium
+503,2723,1,1,3,SQL Injection,Critical
+404,200,0,0,1,Broken Authentication,Low
+500,2020,1,1,3,BOLA,Critical
+429,1464,1,1,2,Information Disclosure,High
+403,407,0,0,1,XSS,Medium
+200,422,1,0,1,Security Misconfiguration,Medium
+200,649,0,0,1,Broken Authentication,Medium
+500,5058,1,1,2,Excessive Data Exposure,Critical
+200,90,0,1,1,Information Disclosure,Low
+503,5722,1,1,3,Excessive Data Exposure,Critical
+429,2313,1,1,2,SQL Injection,High
+200,780,1,1,1,Information Disclosure,Medium
+404,1655,0,0,1,Excessive Data Exposure,Low
+200,454,1,0,1,XSS,Medium
+429,900,1,0,2,Security Misconfiguration,High
+500,1430,1,0,2,Path Traversal,High
+429,844,0,1,1,Information Disclosure,Medium
+200,202,1,0,1,BOLA,Low
+403,3450,0,1,1,Excessive Data Exposure,Medium
+403,516,1,0,2,XSS,High
+401,433,1,0,2,Rate Limit Abuse,High
+200,1749,0,1,1,SQL Injection,Medium
+500,281,1,0,2,Rate Limit Abuse,High
+500,1067,0,0,2,Broken Authentication,High
+500,754,1,0,2,XSS,High
+200,113,0,0,1,Rate Limit Abuse,Low
+429,869,1,0,2,XSS,High
+401,396,1,0,2,Rate Limit Abuse,High
+200,426,1,0,1,XSS,Medium
+401,1511,1,1,3,BOLA,Critical
+200,120,0,1,1,Information Disclosure,Low
+200,239,0,0,1,Rate Limit Abuse,Medium
+401,848,1,1,2,Information Disclosure,High
+200,173,0,0,1,XSS,Low
+500,1278,1,1,3,Broken Authentication,Critical
+200,182,0,0,1,Rate Limit Abuse,Low
+401,938,1,0,2,Broken Authentication,High
+429,424,0,0,1,Security Misconfiguration,Medium
+500,1135,1,0,3,XSS,Critical
+429,1649,1,1,1,SQL Injection,Medium
+403,302,0,0,1,BOLA,Medium
+500,1562,1,1,3,Broken Authentication,Critical
+500,5555,1,1,2,Excessive Data Exposure,Critical
+500,793,1,0,2,Security Misconfiguration,High
+200,166,0,0,1,Broken Authentication,Low
+200,159,0,0,1,Security Misconfiguration,Low
+200,117,0,0,1,Rate Limit Abuse,Low
+401,467,0,0,1,Path Traversal,Medium
+200,138,0,0,1,XSS,Low
+401,1471,1,0,3,BOLA,High
+200,219,0,0,1,Rate Limit Abuse,Low
+429,357,0,0,1,XSS,Medium
+403,4315,1,1,2,Excessive Data Exposure,High
+200,181,0,0,1,BOLA,Low
+200,2984,0,1,1,Excessive Data Exposure,Medium
+200,153,0,0,1,Rate Limit Abuse,Low
+200,752,0,0,1,SQL Injection,Low
+404,1482,0,0,3,Broken Authentication,High
+403,1046,1,0,2,Broken Authentication,High
+200,445,0,0,1,Security Misconfiguration,Medium
+401,4632,1,1,3,Excessive Data Exposure,Critical
+200,227,0,1,1,Information Disclosure,Low
+200,681,1,0,1,Security Misconfiguration,Medium
+200,143,0,0,1,Security Misconfiguration,Low
+401,367,0,0,1,Path Traversal,Medium
+200,1331,0,1,1,Excessive Data Exposure,Low
+404,388,1,0,2,Rate Limit Abuse,High
+403,281,0,0,2,Rate Limit Abuse,High
+401,636,1,0,1,Security Misconfiguration,Medium
+500,1081,1,0,3,BOLA,High
+401,374,0,0,1,Path Traversal,Medium
+200,827,0,0,1,SQL Injection,Low
+401,1880,1,1,3,Broken Authentication,Critical
+500,1512,0,1,2,Information Disclosure,High
+401,2575,1,1,3,SQL Injection,High
+503,3701,1,1,2,SQL Injection,Critical
+403,379,1,0,2,Rate Limit Abuse,High
+401,858,1,0,2,XSS,High
+200,228,0,1,1,Information Disclosure,Low
+429,986,1,0,3,BOLA,High
+429,794,1,0,2,Broken Authentication,High
+200,330,1,0,1,Rate Limit Abuse,Medium
+200,2787,1,1,1,Excessive Data Exposure,Medium
+200,284,0,0,1,Broken Authentication,Low
+429,1549,0,1,1,SQL Injection,Medium
+403,306,1,0,1,Security Misconfiguration,Medium
+401,373,1,0,1,Rate Limit Abuse,Medium
+429,676,1,0,2,BOLA,High
+401,1238,0,0,2,Path Traversal,High
+429,503,1,0,2,Rate Limit Abuse,High
+403,345,0,0,1,XSS,Medium
+404,1206,1,0,3,Broken Authentication,High
+404,1485,0,1,1,Excessive Data Exposure,Low
+500,1159,0,0,2,Security Misconfiguration,High
+500,2766,1,1,3,BOLA,Critical
+404,1842,1,1,3,SQL Injection,High
+200,742,1,1,1,Information Disclosure,Medium
+429,687,0,0,2,XSS,High
+403,409,1,0,2,Rate Limit Abuse,High
+429,745,1,0,2,Security Misconfiguration,High
+200,95,0,0,1,XSS,Low
+401,601,1,0,2,Broken Authentication,Medium
+404,192,0,0,1,Rate Limit Abuse,Low
+403,310,1,0,1,Rate Limit Abuse,Medium
+401,454,0,0,2,Rate Limit Abuse,High
+500,4561,0,1,2,Excessive Data Exposure,High
+404,294,0,0,1,Information Disclosure,Low
+200,196,0,0,1,XSS,Low
+200,286,0,0,1,Information Disclosure,Low
+401,308,1,0,2,Rate Limit Abuse,High
+429,523,1,0,1,BOLA,Medium
+401,1421,1,1,3,Broken Authentication,Critical
+500,2152,1,1,3,Broken Authentication,Critical
+401,530,1,0,3,Rate Limit Abuse,Critical
+500,2580,1,1,3,SQL Injection,High
+500,2169,0,1,3,SQL Injection,High
+503,1770,1,1,3,Information Disclosure,Critical
+429,939,1,0,2,BOLA,High
+429,401,1,0,2,Broken Authentication,Medium
+200,183,0,1,1,Information Disclosure,Low
+404,627,1,0,3,Broken Authentication,High
+500,5386,1,1,2,Excessive Data Exposure,Critical
+200,151,0,0,1,Path Traversal,Low
+429,1382,0,0,2,SQL Injection,Medium
+500,2157,1,1,2,SQL Injection,High
+403,1019,1,0,2,Security Misconfiguration,High
+401,173,1,0,1,Rate Limit Abuse,Medium
+200,193,0,0,1,Path Traversal,Low
+429,2992,0,1,1,Excessive Data Exposure,Medium
+403,1327,1,0,2,Path Traversal,High
+200,129,0,0,1,Security Misconfiguration,Low
+401,2783,1,1,3,SQL Injection,High
+401,295,0,0,1,Path Traversal,Medium
+500,1237,0,0,2,Broken Authentication,High
+401,1293,1,0,2,Broken Authentication,High
+500,1844,1,1,3,BOLA,Critical
+429,474,0,0,1,XSS,Medium
+401,833,0,0,2,Path Traversal,High
+500,2905,1,1,3,SQL Injection,Critical
+404,224,0,0,1,Rate Limit Abuse,Low
+200,119,0,0,1,Security Misconfiguration,Low
+401,2657,1,1,3,BOLA,Critical
+401,500,1,0,2,Rate Limit Abuse,High
+403,5222,1,1,3,Excessive Data Exposure,Critical
+200,174,0,0,1,Security Misconfiguration,Low
+403,4415,1,1,2,Excessive Data Exposure,High
+500,711,1,0,2,XSS,High
+404,532,1,0,2,XSS,High
+200,508,1,0,1,Security Misconfiguration,Medium
+200,506,0,0,1,Security Misconfiguration,Medium
+200,609,1,0,1,BOLA,Medium
+200,1244,0,0,2,SQL Injection,Medium
+200,342,0,0,1,Rate Limit Abuse,Medium
+200,1399,1,0,2,SQL Injection,Medium
+404,773,1,0,2,Broken Authentication,High
+200,233,0,0,1,Rate Limit Abuse,Low
+401,320,0,0,1,Path Traversal,Medium
+200,446,1,0,1,Broken Authentication,Medium
+200,523,0,1,1,Information Disclosure,Medium
+500,1765,1,1,3,BOLA,Critical
+403,542,0,0,1,Security Misconfiguration,Medium
+500,1350,1,1,2,Information Disclosure,High
+500,2394,1,1,3,Path Traversal,Critical
+500,6054,1,1,3,Excessive Data Exposure,Critical
+200,217,0,0,1,Security Misconfiguration,Low
+200,835,1,0,1,SQL Injection,Low
+200,900,1,1,1,Information Disclosure,Medium
+200,208,0,0,1,Path Traversal,Low
+401,662,1,0,2,Rate Limit Abuse,Critical
+429,639,1,0,2,XSS,High
+500,473,1,0,3,Rate Limit Abuse,Critical
+200,346,1,0,1,Security Misconfiguration,Medium
+200,211,0,0,1,Broken Authentication,Low
+200,197,1,0,1,Path Traversal,Low
+200,207,0,0,1,Path Traversal,Low
+200,125,0,0,1,Rate Limit Abuse,Low
+200,473,1,0,1,Path Traversal,Medium
+403,310,0,0,1,XSS,Medium
+200,175,0,0,1,XSS,Low
+200,257,0,0,1,BOLA,Low
+500,2472,1,1,3,Broken Authentication,Critical
+403,2224,1,1,2,Path Traversal,Critical
+429,1374,1,0,2,BOLA,High
+404,126,1,0,1,Rate Limit Abuse,Low
+200,111,0,0,1,Security Misconfiguration,Low
+429,590,0,0,1,Security Misconfiguration,Medium
+429,830,0,1,1,Information Disclosure,Medium
+200,424,1,0,2,BOLA,Medium
+401,2517,1,1,3,SQL Injection,High
+404,223,0,0,1,BOLA,Low
+200,149,0,1,1,Information Disclosure,Low
+401,855,0,1,1,Information Disclosure,Medium
+500,2739,0,1,3,SQL Injection,High
+500,6122,1,1,2,Excessive Data Exposure,Critical
+500,705,1,0,2,Path Traversal,High
+200,353,1,1,1,Information Disclosure,Medium
+200,167,1,0,1,Rate Limit Abuse,Low
+200,91,0,0,1,XSS,Low
+200,261,1,0,1,BOLA,Low
+500,2770,1,1,3,Broken Authentication,Critical
+500,5675,1,1,3,Excessive Data Exposure,Critical
+200,227,0,0,1,Broken Authentication,Low
+503,2096,1,1,3,BOLA,Critical
+403,2943,1,1,2,SQL Injection,Critical
+429,1222,0,1,2,Information Disclosure,High
+503,1156,1,0,3,XSS,Critical
+503,3210,1,1,3,SQL Injection,Critical
+404,3856,0,1,2,Excessive Data Exposure,High
+404,232,0,0,1,XSS,Low
+500,985,1,0,2,Path Traversal,High
+429,524,0,0,1,Security Misconfiguration,Medium
+200,238,0,0,1,BOLA,Low
+200,2162,0,0,1,Excessive Data Exposure,Low
+200,499,1,1,1,Information Disclosure,Medium
+404,1234,1,0,3,Broken Authentication,High
+500,937,1,0,3,BOLA,High
+503,4909,1,1,3,Excessive Data Exposure,Critical
+429,640,0,0,1,Security Misconfiguration,Medium
+500,4956,1,1,2,Excessive Data Exposure,High
+500,6114,1,1,3,Excessive Data Exposure,Critical
+500,2969,1,1,2,SQL Injection,Critical
+503,3385,1,1,2,SQL Injection,Critical
+200,176,0,0,1,Path Traversal,Low
+503,6186,1,1,3,Excessive Data Exposure,Critical
+500,2832,1,1,3,SQL Injection,Critical
+403,2145,1,1,3,SQL Injection,High
+404,1172,1,0,2,Security Misconfiguration,High
+401,977,0,0,2,Security Misconfiguration,High
+429,1718,1,1,1,SQL Injection,Medium
+503,4831,1,1,3,Excessive Data Exposure,Critical
+500,1876,0,1,2,Path Traversal,Critical
+503,1564,0,1,2,Information Disclosure,Critical
+429,430,1,0,1,Path Traversal,Medium
+200,248,0,0,1,XSS,Low
+403,3647,1,1,3,SQL Injection,Critical
+200,106,0,0,1,Information Disclosure,Low
+200,324,1,0,1,XSS,Medium
+429,1864,1,1,2,SQL Injection,High
+429,330,0,0,1,XSS,Medium
+404,948,0,0,1,SQL Injection,Low
+403,1563,0,0,2,BOLA,High
+500,1592,1,0,2,XSS,Critical
+404,141,0,0,1,Security Misconfiguration,Low
+404,1456,1,0,2,BOLA,High
+200,84,0,0,1,Information Disclosure,Low
+500,5618,1,1,3,Excessive Data Exposure,Critical
+429,1120,1,0,3,BOLA,High
+200,179,0,0,1,Information Disclosure,Low
+403,3145,0,1,1,Excessive Data Exposure,Medium
+200,136,0,0,1,Security Misconfiguration,Low
+500,2352,1,1,3,Information Disclosure,Critical
+404,2005,1,1,2,SQL Injection,High
+429,313,0,0,2,Rate Limit Abuse,High
+401,1605,1,1,3,BOLA,Critical
+500,4589,1,1,3,Excessive Data Exposure,Critical
+403,2078,1,1,3,BOLA,Critical
+200,365,0,0,1,Rate Limit Abuse,Medium
+500,1067,0,0,3,BOLA,High
+500,903,0,0,3,BOLA,High
+500,5813,1,1,2,Excessive Data Exposure,Critical
+500,3662,1,1,2,Excessive Data Exposure,High
+429,285,1,0,1,XSS,Medium
+200,2257,1,1,1,Excessive Data Exposure,Medium
+200,80,1,0,1,Information Disclosure,Low
+404,1513,1,0,3,Broken Authentication,High
+401,1332,0,0,2,Path Traversal,High
+401,2705,1,1,3,Broken Authentication,Critical
+404,1494,1,0,2,Path Traversal,High
+403,406,1,0,1,Security Misconfiguration,Medium
+200,236,0,0,1,Broken Authentication,Low
+429,857,1,0,2,Path Traversal,High
+200,188,0,0,1,Path Traversal,Low
+500,2161,0,1,3,BOLA,Critical
+429,3531,1,1,1,Excessive Data Exposure,Medium
+401,4018,0,1,2,Excessive Data Exposure,High
+429,3995,1,1,2,Excessive Data Exposure,High
+500,1903,1,1,2,Path Traversal,Critical
+503,2561,1,1,3,SQL Injection,Critical
+401,333,0,0,1,Path Traversal,Medium
+500,2376,1,1,2,SQL Injection,High
+503,2367,1,1,3,BOLA,Critical
+200,291,0,0,1,XSS,Medium
+200,157,0,0,1,Path Traversal,Low
+429,1309,0,0,1,SQL Injection,Medium
+401,1240,1,1,3,Broken Authentication,Critical
+200,2086,0,0,1,Excessive Data Exposure,Low
+429,5140,1,1,2,Excessive Data Exposure,High
+200,147,0,0,1,Path Traversal,Low
+200,230,0,0,1,XSS,Low
+401,1489,0,1,2,Information Disclosure,High
+200,215,0,0,1,Rate Limit Abuse,Medium
+500,1643,1,1,3,BOLA,Critical
+401,282,1,0,1,XSS,Medium
+403,1944,1,1,2,Information Disclosure,Critical
+403,3982,1,1,2,Excessive Data Exposure,High
+404,311,0,1,1,Information Disclosure,Low
+401,1590,0,1,1,SQL Injection,Medium
+429,315,0,0,1,Path Traversal,Medium
+401,1151,0,0,3,BOLA,High
+200,245,0,0,1,Information Disclosure,Low
+500,1026,1,0,2,Path Traversal,High
+403,1084,1,0,3,BOLA,High
+500,1205,1,1,2,Information Disclosure,High
+200,399,0,1,1,Information Disclosure,Medium
+404,1163,1,0,3,BOLA,High
+200,293,1,0,1,Information Disclosure,Low
+500,5341,1,1,2,Excessive Data Exposure,Critical
+429,170,0,0,1,Rate Limit Abuse,Medium
+404,1258,1,0,2,Path Traversal,High
+200,127,0,0,1,Broken Authentication,Low
+200,336,0,0,1,Information Disclosure,Low
+403,562,1,0,1,Broken Authentication,Medium
+200,262,0,0,1,BOLA,Low
+500,5744,0,1,2,Excessive Data Exposure,Critical
+200,1786,1,1,1,Excessive Data Exposure,Low
+503,2489,1,1,3,Broken Authentication,Critical
+429,3568,0,1,1,Excessive Data Exposure,Medium
+429,378,1,0,1,Rate Limit Abuse,Medium
+200,367,0,0,1,Rate Limit Abuse,Medium
+429,243,0,0,1,Rate Limit Abuse,Medium
+200,492,1,0,1,XSS,Medium
+429,2581,1,1,1,Excessive Data Exposure,Medium
+403,692,0,0,1,BOLA,Medium
+403,447,0,0,2,BOLA,Medium
+200,104,0,0,1,Rate Limit Abuse,Low
+500,999,0,0,3,XSS,Critical
+429,1245,1,0,2,Path Traversal,High
+200,400,1,0,1,Path Traversal,Medium
+429,486,0,1,1,Information Disclosure,Medium
+200,152,0,0,1,Security Misconfiguration,Low
+500,1966,1,1,2,Path Traversal,Critical
+200,538,0,0,1,Broken Authentication,Medium
+403,2639,1,1,1,Excessive Data Exposure,Medium
+200,195,0,0,1,Path Traversal,Low
+429,1111,1,0,2,Path Traversal,High
+403,507,1,0,1,XSS,Medium
+200,177,0,0,1,Rate Limit Abuse,Low
+429,2770,1,1,3,SQL Injection,High
+401,1160,1,0,2,XSS,Critical
+404,803,1,0,3,Broken Authentication,High
+503,2572,1,0,2,Security Misconfiguration,Critical
+500,3210,1,1,3,Path Traversal,Critical
+200,383,0,0,1,Path Traversal,Medium
+429,948,1,0,2,Security Misconfiguration,High
+200,171,0,0,1,Path Traversal,Low
+404,1130,0,0,2,Broken Authentication,High
+500,2818,1,1,3,Path Traversal,Critical
+500,6132,1,1,3,Excessive Data Exposure,Critical
+500,3218,1,0,2,Security Misconfiguration,Critical
+500,506,1,0,2,Rate Limit Abuse,High
+404,766,0,0,2,XSS,High
+200,839,1,1,1,Information Disclosure,Medium
+403,256,0,0,1,Path Traversal,Medium
+503,2176,1,1,3,Broken Authentication,Critical
+401,956,0,0,3,BOLA,High
+429,193,0,0,1,Path Traversal,Medium
+401,2104,1,1,3,Information Disclosure,Critical
+200,205,0,0,1,Information Disclosure,Low
+429,3541,0,1,2,Excessive Data Exposure,High
+401,209,1,0,1,Rate Limit Abuse,Medium
+403,2756,1,1,3,BOLA,Critical
+500,2099,1,1,3,BOLA,Critical
+500,776,1,0,2,XSS,High
+401,515,1,0,2,Rate Limit Abuse,High
+429,1182,1,0,2,Path Traversal,High
+500,1741,1,1,3,BOLA,Critical
+404,109,0,0,1,Rate Limit Abuse,Low
+429,388,0,0,1,Broken Authentication,Medium
+401,2465,0,1,1,Excessive Data Exposure,Medium
+200,678,1,0,1,BOLA,Medium
+500,4554,1,1,2,Excessive Data Exposure,Critical
+200,428,0,0,1,XSS,Medium
+403,667,1,0,2,XSS,High
+404,1417,1,0,3,Broken Authentication,High
+403,1489,1,0,2,Path Traversal,High
+401,463,1,0,3,Rate Limit Abuse,Critical
+404,1306,0,0,1,Excessive Data Exposure,Low
+403,4394,1,1,2,Excessive Data Exposure,High
+200,304,0,0,1,Information Disclosure,Low
+500,4918,1,1,2,Excessive Data Exposure,High
+200,409,0,0,1,Broken Authentication,Medium
+429,521,0,0,1,Security Misconfiguration,Medium
+403,1338,0,0,2,Path Traversal,High
+200,355,0,0,1,Rate Limit Abuse,Medium
+200,103,0,0,1,Security Misconfiguration,Low
+200,1473,0,0,2,SQL Injection,Medium
+200,389,0,0,1,Broken Authentication,Medium
+403,1391,1,1,2,Information Disclosure,High
+403,1028,0,0,2,Path Traversal,High
+200,509,0,0,2,Broken Authentication,Medium
+429,420,0,0,1,Path Traversal,Medium
+500,2941,0,1,2,SQL Injection,Critical
+401,1100,0,0,1,SQL Injection,Medium
+403,1446,1,0,2,BOLA,High
+403,1967,1,1,3,SQL Injection,High
+403,579,1,0,3,Rate Limit Abuse,Critical
+401,1603,1,1,3,Broken Authentication,Critical
+500,873,0,0,3,BOLA,High
+429,208,0,0,1,Rate Limit Abuse,Medium
+429,1571,1,0,2,BOLA,High
+500,3772,1,1,2,SQL Injection,Critical
+200,1724,1,1,1,SQL Injection,Medium
+403,2329,1,1,3,SQL Injection,High
+200,272,1,0,1,BOLA,Low
+401,347,0,0,2,BOLA,Medium
+500,739,1,0,2,XSS,High
+403,736,0,1,1,Information Disclosure,Medium
+401,1035,1,1,2,Information Disclosure,High
+200,204,1,0,1,Security Misconfiguration,Low
+401,676,1,0,2,XSS,High
+200,662,0,0,1,Broken Authentication,Medium

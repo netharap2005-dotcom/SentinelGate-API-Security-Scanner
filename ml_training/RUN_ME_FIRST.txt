@@ -1,0 +1,27 @@
+SentinelGate ML Final Deliverable - How to Run
+
+1. Open terminal in the SentinelGate-ML1-final folder.
+2. Install dependencies:
+   pip install -r requirements.txt
+
+3. Train and save the model:
+   python train_model.py
+
+4. Test the ML prediction module:
+   python test_prediction.py
+
+5. Test the combined analyzer module:
+   python test_analyzer.py
+
+Files:
+- train_model.py -> trains Decision Tree and Random Forest, saves best model
+- ml_predictor.py -> loads the saved model and predicts severity
+- cvss_calculator.py -> calculates CVSS-like score
+- scan_analyzer.py -> combines ML + CVSS into one result
+- scanner_training_data.csv -> training data used for the prototype
+- training_metrics.json -> created after training
+
+If you want to use Jupyter:
+1. Open the folder in Jupyter.
+2. Open phase4_ml_pipeline.ipynb.
+3. Run cells from top to bottom.
