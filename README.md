@@ -54,18 +54,26 @@ ML Severity Prediction Engine
 
 ## Dashboard
 ![Dashboard](screenshots/dashboard.png)
+![Dashboard Analytics](screenshots/dashboard_2.png)
 
 ## New Scan
 ![New Scan](screenshots/new_scan.png)
 
 ## Results
 ![Results](screenshots/results.png)
+![Results Details](screenshots/results_2.png)
+![Results Charts](screenshots/results_3.png)
 
 ## History
 ![History](screenshots/history.png)
 
+## Alerts
+![Alerts](screenshots/alerts.png)
+
 ## Settings
 ![Settings](screenshots/settings.png)
+![Session Management](screenshots/settings_2.png)
+![API Key](screenshots/settings_3.png)
 
 ## PDF Report
 ![Report](screenshots/report.png)
