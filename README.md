@@ -34,3 +34,37 @@ Backend API (Flask)
 PostgreSQL Database
         ↓
 ML Severity Prediction Engine
+
+---
+
+# Screenshots
+
+## Login Page
+![Login](screenshots/login.png)
+
+## Register Page
+![Register](screenshots/register.png)
+
+## MFA Setup
+![MFA](screenshots/mfa.png)
+
+## Authenticator Setup
+![Authenticator](screenshots/authenticator_setup.png)
+
+## Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+## New Scan
+![New Scan](screenshots/new_scan.png)
+
+## Results
+![Results](screenshots/results.png)
+
+## History
+![History](screenshots/history.png)
+
+## Settings
+![Settings](screenshots/settings.png)
+
+## PDF Report
+![Report](screenshots/report.png)
