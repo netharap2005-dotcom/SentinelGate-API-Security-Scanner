@@ -69,3 +69,6 @@ ML Severity Prediction Engine
 
 ## PDF Report
 ![Report](screenshots/report.png)
+
+
+![Report](screenshots/report.png)
