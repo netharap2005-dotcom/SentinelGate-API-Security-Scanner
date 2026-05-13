@@ -16,3 +16,7 @@ build/
 
 # OS
 .DS_Store
+
+dist/
+generated_reports/
+.ipynb_checkpoints/
