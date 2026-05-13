@@ -34,6 +34,7 @@ Backend API (Flask)
 PostgreSQL Database
         ↓
 ML Severity Prediction Engine
+```
 
 ---
 
