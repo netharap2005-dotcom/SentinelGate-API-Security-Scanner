@@ -1,3 +1,10 @@
+# ---------------------------------------------------------
+# This file manages the SentinelGate scan workflow. It validates
+# API URLs, start scans, run scanning in the background, stores
+# vulnerabilities, creates alerts, returns scan results, and
+# generates styled PDF reports.
+# ---------------------------------------------------------
+
 import os
 import time
 import socket
@@ -30,7 +37,7 @@ scans_bp = Blueprint("scans", __name__)
 
 ALLOW_LOCALHOST = True
 
-
+# Validate whether the provided target URL is a reachable API endpoint
 def validate_api_endpoint(target_url):
     try:
         parsed = urlparse(target_url)
@@ -117,7 +124,8 @@ def validate_api_endpoint(target_url):
         return False, f"Request failed: {str(e)}"
     except Exception as e:
         return False, f"Validation failed: {str(e)}"
-
+        
+# Map detected vulnerability names to OWASP API Top 10 categories
 def map_to_owasp_category(vuln_name):
     mapping = {
         "SQL Injection": "API8:2023 - Security Misconfiguration",
@@ -129,7 +137,8 @@ def map_to_owasp_category(vuln_name):
     }
 
     return mapping.get(vuln_name, "API10:2023 - Unsafe Consumption of APIs")
-
+    
+# Calculate and format the duration between scan start and completion
 def format_duration(started_at, completed_at):
     if not started_at or not completed_at:
         return None
@@ -140,7 +149,8 @@ def format_duration(started_at, completed_at):
     seconds = total_seconds % 60
 
     return f"{minutes}m {seconds}s"
-
+    
+# Convert long OWASP category names into shorter display labels
 def format_category_label(category):
     label_map = {
         "API1:2023 - Broken Object Level Authorization": "BOLA (API1)",
@@ -156,6 +166,7 @@ def format_category_label(category):
     }
     return label_map.get(category, category)
 
+# Set the planned endpoint count based on the selected scan depth    
 def get_total_endpoints_by_depth(scan_depth):
     if scan_depth == "shallow":
         return 18
@@ -187,7 +198,7 @@ def format_time_ago(dt):
     else:
         return dt.strftime("%Y-%m-%d")
     
-
+# Convert a datetime value into a readable "time ago" format
 def format_scan_time_ago(dt):
     if not dt:
         return None
@@ -212,30 +223,33 @@ def format_scan_time_ago(dt):
         return dt.strftime("%Y-%m-%d")
     
 
+# Convert scan datetime values into readable time labels    
 def should_send_any_email(preference):
     if not preference:
         return True
     return preference.email_alerts
 
-
+# Decide whether general email notifications should be sent
 def should_send_scan_complete_email(preference):
     if not preference:
         return True
     return preference.email_alerts and preference.email_scan_complete
 
-
+# Decide whether scan completion email notifications should be sent
 def should_send_critical_email(preference):
     if not preference:
         return True
     return preference.email_alerts and preference.critical_vulnerability_alerts
 
-
+# Check whether a finding should be treated as critical
 def is_critical_finding(item):
     return (
         item.get("severity") == "Critical"
         or item.get("ml_severity") == "Critical"
         or item.get("cvss_score", 0) >= 9.0
     )
+
+# Return the color theme used for each vulnerability severity level
 def get_severity_colors(severity):
     palette = {
         "Critical": (colors.HexColor("#EF4444"), colors.HexColor("#FEE2E2")),
@@ -245,7 +259,7 @@ def get_severity_colors(severity):
     }
     return palette.get(severity, (colors.HexColor("#2563EB"), colors.HexColor("#DBEAFE")))
 
-
+# Convert a CVSS score into a severity label
 def get_cvss_severity(score):
     score = float(score or 0)
     if score >= 9.0:
@@ -256,12 +270,13 @@ def get_cvss_severity(score):
         return "Medium"
     return "Low"
 
-
+# Convert empty values into safe text for API responses and PDF reports
 def safe_text(value):
     if value is None:
         return "N/A"
     return str(value)
 
+# Add the PDF background color and page number    
 def add_pdf_background(canvas, doc):
     canvas.saveState()
     canvas.setFillColor(colors.HexColor("#F7FBFF"))
@@ -279,7 +294,8 @@ def add_pdf_background(canvas, doc):
     )
     
     canvas.restoreState()
-
+    
+# Build the styled PDF report content using scan and vulnerability data
 def build_styled_pdf(doc, scan, vulnerabilities):
     styles = getSampleStyleSheet()
 
@@ -672,6 +688,7 @@ def build_styled_pdf(doc, scan, vulnerabilities):
 
     return elements
 
+# Generate and save a scan report PDF file
 def generate_scan_pdf_file(scan, vulnerabilities):
     reports_dir = os.path.join(os.getcwd(), "generated_reports")
     os.makedirs(reports_dir, exist_ok=True)
@@ -692,6 +709,7 @@ def generate_scan_pdf_file(scan, vulnerabilities):
 
     return file_path
 
+# Build the CVSS panel data used by the frontend results page    
 def build_cvss_panel(score):
     return {
         "score": score,
@@ -709,6 +727,7 @@ def build_cvss_panel(score):
         ]
     }
 
+# Decide whether a vulnerability should create an alert    
 def should_create_alert(preference, item):
     cvss_score = item.get("cvss_score", 0.0)
     ml_severity = item.get("ml_severity", "Low")
@@ -757,7 +776,7 @@ def is_critical_finding(item):
         or item.get("cvss_score", 0) >= 9.0
     )
 
-
+# Store an activity log entry for scan-related actions
 def log_activity(user_id, action, description):
     log = ActivityLog(
         user_id=user_id,
@@ -766,11 +785,12 @@ def log_activity(user_id, action, description):
     )
     db.session.add(log)    
 
+# Test route used to confirm that the scans blueprint is working    
 @scans_bp.route("/test")
 def test_scans():
     return {"message": "scans route working"}
 
-
+# Run the scan process in the background and store scan results
 def run_scan_in_background(app, scan_id, target_url, scan_depth, user_id):
     with app.app_context():
         scan = Scan.query.get(scan_id)
@@ -1014,7 +1034,7 @@ def run_scan_in_background(app, scan_id, target_url, scan_depth, user_id):
                 db.session.commit()
             print(f"Background scan failed for scan_id={scan_id}: {e}")
     
-
+# Start a new scan after validating the user input and API URL
 @scans_bp.route("/start", methods=["POST"])
 def start_scan():
     import re
@@ -1082,7 +1102,7 @@ def start_scan():
         "progress_percent": new_scan.progress_percent
     }), 202
 
-
+# Retrieve scan history for the selected user with optional filters
 @scans_bp.route("/history", methods=["GET"])
 def get_scan_history():
     user_id = request.args.get("user_id", type=int)
@@ -1164,6 +1184,7 @@ def get_scan_history():
     }), 200
 
 
+# Retrieve basic information for one selected scan
 @scans_bp.route("/<int:scan_id>", methods=["GET"])
 def get_single_scan(scan_id):
     scan = Scan.query.get(scan_id)
@@ -1205,6 +1226,7 @@ def get_scan_progress(scan_id):
         "ml_severity": scan.ml_severity
     }), 200
 
+# Start a new scan using the same details as a previous scan    
 @scans_bp.route("/<int:scan_id>/rerun", methods=["POST"])
 def rerun_scan(scan_id):
     old_scan = Scan.query.get(scan_id)
@@ -1253,7 +1275,7 @@ def rerun_scan(scan_id):
         "progress_percent": new_scan.progress_percent
     }), 202
 
-
+# Delete a selected scan record from history
 @scans_bp.route("/<int:scan_id>", methods=["DELETE"])
 def delete_scan(scan_id):
     scan = Scan.query.get(scan_id)
@@ -1268,6 +1290,7 @@ def delete_scan(scan_id):
         "message": "Scan deleted successfully"
     }), 200
 
+# Retrieve the latest completed scan results for the user    
 @scans_bp.route("/latest-results", methods=["GET"])
 def get_latest_results():
     user_id = request.args.get("user_id", type=int)
@@ -1397,7 +1420,7 @@ def get_latest_results():
 
 
 
-
+# Retrieve detailed scan results with optional filtering
 @scans_bp.route("/<int:scan_id>/results", methods=["GET"])
 def get_scan_results(scan_id):
     severity_filter = request.args.get("severity")
@@ -1529,6 +1552,7 @@ def get_scan_results(scan_id):
         "findings": filtered_findings
     }), 200
 
+# Export the selected scan result as a downloadable PDF report
 @scans_bp.route("/<int:scan_id>/export-pdf", methods=["GET"])
 def export_scan_pdf(scan_id):
     scan = Scan.query.get(scan_id)
