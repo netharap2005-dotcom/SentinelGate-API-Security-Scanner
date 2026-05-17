@@ -1,3 +1,9 @@
+# ---------------------------------------------------------
+# This file manages alert-related API routes for SentinelGate.
+# It retrieves alerts, updates alert status, marks alerts as read,
+# and deletes alert records for a specific user.
+# ---------------------------------------------------------
+
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 from app.extensions import db
@@ -5,7 +11,7 @@ from app.models import Alert
 
 alerts_bp = Blueprint("alerts", __name__)
 
-
+# Convert a datetime value into a readable "time ago" format
 def format_time_ago(dt):
     if not dt:
         return None
@@ -30,11 +36,12 @@ def format_time_ago(dt):
         return dt.strftime("%Y-%m-%d")
 
 
+# Test route used to confirm that the alerts blueprint is working    
 @alerts_bp.route("/test")
 def test_alerts():
     return {"message": "alerts route working"}
 
-
+# Retrieve all alerts for a selected user
 @alerts_bp.route("", methods=["GET"])
 def get_alerts():
     user_id = request.args.get("user_id", type=int)
@@ -78,7 +85,7 @@ def get_alerts():
 
     return jsonify({"alerts": results}), 200
 
-
+# Retrieve one specific alert using its alert ID
 @alerts_bp.route("/<int:alert_id>", methods=["GET"])
 def get_single_alert(alert_id):
     alert = Alert.query.get(alert_id)
@@ -104,7 +111,7 @@ def get_single_alert(alert_id):
         "resolved_at": alert.resolved_at.strftime("%Y-%m-%d %H:%M:%S") if alert.resolved_at else None
     }), 200
 
-
+# Mark all unread alerts as read for a selected user
 @alerts_bp.route("/mark-all-read", methods=["POST"])
 def mark_all_read():
     data = request.get_json()
@@ -124,7 +131,7 @@ def mark_all_read():
         "message": "All alerts marked as read"
     }), 200
 
-
+# Change an alert status to investigating
 @alerts_bp.route("/<int:alert_id>/investigate", methods=["POST"])
 def set_investigate(alert_id):
     alert = Alert.query.get(alert_id)
@@ -140,7 +147,7 @@ def set_investigate(alert_id):
         "message": "Alert moved to investigating"
     }), 200
 
-
+# Mark an alert as resolved and store the resolved time
 @alerts_bp.route("/<int:alert_id>/resolve", methods=["POST"])
 def set_resolve(alert_id):
     alert = Alert.query.get(alert_id)
@@ -158,6 +165,7 @@ def set_resolve(alert_id):
     }), 200
 
 
+# Mark a single alert as read
 @alerts_bp.route("/<int:alert_id>/read", methods=["POST"])
 def mark_read(alert_id):
     alert = Alert.query.get(alert_id)
@@ -173,6 +181,7 @@ def mark_read(alert_id):
     }), 200
 
 
+# Delete a selected alert from the database
 @alerts_bp.route("/<int:alert_id>", methods=["DELETE"])
 def delete_alert(alert_id):
     alert = Alert.query.get(alert_id)
