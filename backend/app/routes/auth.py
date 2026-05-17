@@ -1,3 +1,10 @@
+# ---------------------------------------------------------
+# This file manages authentication and account security for
+# SentinelGate. It handles registration, login, and Microsoft
+# Authenticator MFA, password recovery, sessions, logout,
+# and account deletion.
+# ---------------------------------------------------------
+
 from flask import Blueprint, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
@@ -16,9 +23,11 @@ auth_bp = Blueprint("auth", __name__)
 
 APP_ISSUER = "SentinelGate"
 
+# Check whether a password meets the required security rules
 def is_strong_password(password):
     return bool(re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,}$", password))
-
+    
+# Identify the user's browser and device from the request header
 def get_device_name():
     ua = request.headers.get("User-Agent", "").lower()
 
@@ -53,7 +62,7 @@ def get_device_name():
 
     return f"{browser} on {device}"
 
-
+# Create or update a login session for the current user device
 def create_user_session(user):
     device_name = get_device_name()
     ip_address = request.remote_addr
@@ -87,6 +96,7 @@ def create_user_session(user):
     db.session.add(session)
     return session
 
+# Store an activity log entry for important user actions
 def log_activity(user_id, action, description):
     log = ActivityLog(
         user_id=user_id,
@@ -95,11 +105,12 @@ def log_activity(user_id, action, description):
     )
     db.session.add(log)
 
+# Test route used to confirm that the authentication blueprint is working    
 @auth_bp.route("/test")
 def test_auth():
     return {"message": "auth route working"}
 
-
+# Register a new user and store their password securely
 @auth_bp.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
@@ -143,7 +154,7 @@ def register():
         "user_id": new_user.id
     }), 201
 
-
+# Generate the Microsoft Authenticator secret and QR code for MFA setup
 @auth_bp.route("/setup-mfa", methods=["POST"])
 def setup_mfa():
     data = request.get_json()
@@ -184,7 +195,7 @@ def setup_mfa():
         "qr_code_base64": qr_base64
     }), 200
 
-
+# Confirm the first MFA code and complete the MFA setup process
 @auth_bp.route("/confirm-mfa", methods=["POST"])
 def confirm_mfa():
     data = request.get_json()
@@ -223,7 +234,7 @@ def confirm_mfa():
         }
     }), 200
 
-
+# Validate email and password, then decide whether MFA setup or MFA verification is needed
 @auth_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -276,7 +287,7 @@ def login():
         }
     }), 200
 
-
+# Verify the Microsoft Authenticator code during login
 @auth_bp.route("/verify-mfa", methods=["POST"])
 def verify_mfa():
     data = request.get_json()
@@ -313,7 +324,7 @@ def verify_mfa():
         }
     }), 200
 
-
+# Generate and email a password reset OTP to the user
 @auth_bp.route("/forgot-password", methods=["POST"])
 def forgot_password():
     data = request.get_json()
@@ -368,7 +379,7 @@ def forgot_password():
         "email": user.email
     }), 200
 
-
+# Verify the reset OTP and update the user's password
 @auth_bp.route("/reset-password", methods=["POST"])
 def reset_password():
     data = request.get_json()
@@ -410,6 +421,7 @@ def reset_password():
         "message": "Password reset successfully"
     }), 200
 
+# Log out the current user session
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
     data = request.get_json() or {}
