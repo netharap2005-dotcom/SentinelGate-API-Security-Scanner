@@ -1,3 +1,7 @@
+## Project Note
+
+This is a group academic capstone project completed for university. The original repository was hosted by a team member.
+
 # SentinelGate – Automated API Security Scanner
 
 SentinelGate is a web-based API security scanning platform developed to help small and medium-sized businesses identify vulnerabilities in APIs using automated security analysis.
